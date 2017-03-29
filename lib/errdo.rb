@@ -2,6 +2,7 @@ require 'errdo/engine'
 require 'errdo/extension'
 require 'errdo/extensions/cancancan'
 require 'errdo/notifications/slack'
+require 'errdo/notifications/rails_logger'
 
 require 'errdo/rake/task' if defined?(Rake::Task)
 
@@ -109,6 +110,9 @@ module Errdo
   def self.notify_with(notifiers = nil)
     if notifiers
       @notifiers = []
+
+      notifiers = { notifiers => {} } unless notifiers.is_a? Hash
+      
       notifiers.each do |notifier|
         klass = Errdo::NOTIFICATION_ADAPTERS[notifier[0]]
         @notifiers.append(klass.new(**notifier[1])) # The options will be in the second field
